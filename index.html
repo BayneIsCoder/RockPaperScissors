@@ -41,6 +41,74 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .profile-setup {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+
+        .profile-setup h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+        }
+
+        .profile-setup input {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin: 10px 0;
+            width: 80%;
+        }
+
+        .profile-setup button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-setup button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .player-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+
+        .player-info h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .stats div {
+            text-align: center;
+        }
+
+        .stats .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
         .score-board {
             display: flex;
             justify-content: space-around;
@@ -194,6 +262,77 @@
             margin: 15px 0;
         }
 
+        .reset-profile {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .reset-profile:hover {
+            background: #ff5252;
+        }
+
+        .welcome-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 60px;
+            border-radius: 30px;
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: welcomePop 2s ease-out forwards;
+        }
+
+        @keyframes welcomePop {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3) rotate(-180deg);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(0.95) rotate(-5deg);
+            }
+            85% {
+                transform: translate(-50%, -50%) scale(1.02) rotate(2deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+
+        .welcome-text {
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-emoji {
+            font-size: 1.5em;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         .hidden {
             display: none;
         }
@@ -213,54 +352,93 @@
     <div class="game-container">
         <h1>🎮 Rock Paper Scissors</h1>
         
-        <div class="score-board">
-            <div class="score">
-                <h3>👤 You</h3>
-                <div class="score-value" id="userScore">0</div>
-            </div>
-            <div class="score">
-                <h3>🤖 Robot</h3>
-                <div class="score-value" id="robotScore">0</div>
-            </div>
+        <!-- Welcome Animation -->
+        <div id="welcomeAnimation" class="welcome-animation hidden">
+            <div class="welcome-emoji">🎉</div>
+            <div class="welcome-text">Welcome back, <span id="welcomeName"></span>!</div>
+            <div class="welcome-emoji">🎮</div>
+        </div>
+        
+        <!-- Profile Setup Screen -->
+        <div id="profileSetup" class="profile-setup">
+            <h2>Welcome! Create Your Profile</h2>
+            <p style="margin-bottom: 20px;">Enter your name to save your game stats</p>
+            <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+            <br>
+            <button onclick="createProfile()">Start Playing</button>
         </div>
 
-        <div class="round-info">
-            Round <span id="currentRound">1</span> of 5
-        </div>
+        <!-- Main Game Area -->
+        <div id="mainGame" class="hidden">
+            <!-- Player Info -->
+            <div class="player-info">
+                <h3>👤 <span id="displayName"></span></h3>
+                <div class="stats">
+                    <div>
+                        <div>Total Games</div>
+                        <div class="stat-value" id="totalGames">0</div>
+                    </div>
+                    <div>
+                        <div>Total Wins</div>
+                        <div class="stat-value" id="totalWins">0</div>
+                    </div>
+                    <div>
+                        <div>Win Rate</div>
+                        <div class="stat-value" id="winRate">0%</div>
+                    </div>
+                </div>
+                <button class="reset-profile" onclick="logOut()">Log Out</button>
+            </div>
 
-        <div id="gameArea">
-            <div class="choices" id="choicesArea">
-                <button class="choice-btn" onclick="playGame(1)">
-                    <div class="choice-icon">🪨</div>
-                    <div class="choice-text">Rock</div>
-                </button>
-                <button class="choice-btn" onclick="playGame(2)">
-                    <div class="choice-icon">📄</div>
-                    <div class="choice-text">Paper</div>
-                </button>
-                <button class="choice-btn" onclick="playGame(3)">
-                    <div class="choice-icon">✂️</div>
-                    <div class="choice-text">Scissors</div>
+            <div class="score-board">
+                <div class="score">
+                    <h3>👤 You</h3>
+                    <div class="score-value" id="userScore">0</div>
+                </div>
+                <div class="score">
+                    <h3>🤖 Robot</h3>
+                    <div class="score-value" id="robotScore">0</div>
+                </div>
+            </div>
+
+            <div class="round-info">
+                Round <span id="currentRound">1</span> of 5
+            </div>
+
+            <div id="gameArea">
+                <div class="choices" id="choicesArea">
+                    <button class="choice-btn" onclick="playGame(1)">
+                        <div class="choice-icon">🪨</div>
+                        <div class="choice-text">Rock</div>
+                    </button>
+                    <button class="choice-btn" onclick="playGame(2)">
+                        <div class="choice-icon">📄</div>
+                        <div class="choice-text">Paper</div>
+                    </button>
+                    <button class="choice-btn" onclick="playGame(3)">
+                        <div class="choice-icon">✂️</div>
+                        <div class="choice-text">Scissors</div>
+                    </button>
+                </div>
+
+                <div class="result hidden" id="resultArea"></div>
+                
+                <button class="continue-btn hidden" id="continueBtn" onclick="nextRound()">
+                    Continue to Next Round
                 </button>
             </div>
 
-            <div class="result hidden" id="resultArea"></div>
-            
-            <button class="continue-btn hidden" id="continueBtn" onclick="nextRound()">
-                Continue to Next Round
-            </button>
-        </div>
-
-        <div class="game-over hidden" id="gameOverArea">
-            <h2>🏆 Game Over!</h2>
-            <div class="final-winner" id="finalWinner"></div>
-            <div style="margin-top: 20px;">
-                <strong>Final Score:</strong><br>
-                You: <span id="finalUserScore">0</span> | Robot: <span id="finalRobotScore">0</span>
+            <div class="game-over hidden" id="gameOverArea">
+                <h2>🏆 Game Over!</h2>
+                <div class="final-winner" id="finalWinner"></div>
+                <div style="margin-top: 20px;">
+                    <strong>Final Score:</strong><br>
+                    You: <span id="finalUserScore">0</span> | Robot: <span id="finalRobotScore">0</span>
+                </div>
+                <button class="new-game-btn" onclick="newGame()">
+                    🎮 New Game
+                </button>
             </div>
-            <button class="new-game-btn" onclick="newGame()">
-                🎮 New Game
-            </button>
         </div>
     </div>
 
@@ -269,12 +447,100 @@
         let robotWins = 0;
         let currentRound = 1;
         let robotChoice = 0;
+        let playerProfile = null;
 
         const choices = {
             1: { name: 'Rock', emoji: '🪨' },
             2: { name: 'Paper', emoji: '📄' },
             3: { name: 'Scissors', emoji: '✂️' }
         };
+
+        // Cookie functions
+        function setCookie(name, value, years) {
+            const date = new Date();
+            date.setTime(date.getTime() + (years * 365 * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + JSON.stringify(value) + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) {
+                    return JSON.parse(c.substring(nameEQ.length, c.length));
+                }
+            }
+            return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            playerProfile = getCookie('rpsProfile');
+            if (playerProfile) {
+                // Show welcome animation
+                document.getElementById('welcomeName').textContent = playerProfile.name;
+                document.getElementById('welcomeAnimation').classList.remove('hidden');
+                
+                // Hide animation and show game after 2 seconds
+                setTimeout(() => {
+                    document.getElementById('welcomeAnimation').classList.add('hidden');
+                    document.getElementById('profileSetup').classList.add('hidden');
+                    document.getElementById('mainGame').classList.remove('hidden');
+                    updateProfileDisplay();
+                }, 2000);
+            }
+        };
+
+        function createProfile() {
+            const playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Please enter your name!');
+                return;
+            }
+
+            playerProfile = {
+                name: playerName,
+                totalGames: 0,
+                totalWins: 0,
+                totalLosses: 0,
+                joinDate: new Date().toISOString()
+            };
+
+            // Save to cookie (expires in 999 years)
+            setCookie('rpsProfile', playerProfile, 999);
+
+            // Show game
+            document.getElementById('profileSetup').classList.add('hidden');
+            document.getElementById('mainGame').classList.remove('hidden');
+            updateProfileDisplay();
+        }
+
+        function updateProfileDisplay() {
+            if (!playerProfile) return;
+
+            document.getElementById('displayName').textContent = playerProfile.name;
+            document.getElementById('totalGames').textContent = playerProfile.totalGames;
+            document.getElementById('totalWins').textContent = playerProfile.totalWins;
+            
+            const winRate = playerProfile.totalGames > 0 
+                ? Math.round((playerProfile.totalWins / playerProfile.totalGames) * 100) 
+                : 0;
+            document.getElementById('winRate').textContent = winRate + '%';
+        }
+
+        function logOut() {
+            if (confirm('Are you sure you want to log out?')) {
+                playerProfile = null;
+                location.reload();
+            }
+        }
 
         function playGame(userChoice) {
             // Robot makes random choice
@@ -308,6 +574,13 @@
                 result = `Robot wins! ${choices[robotChoice].emoji} ${choices[robotChoice].name} beats ${choices[userChoice].emoji} ${choices[userChoice].name}`;
                 resultClass = 'lose';
                 robotWins++;
+            }
+
+            // Save progress after each round (not ties)
+            if (!isTie && playerProfile) {
+                // This is temporary tracking for current game stats
+                // Full stats update happens at game end
+                setCookie('rpsProfile', playerProfile, 999);
             }
 
             // Update scores
@@ -365,6 +638,19 @@
         }
 
         function showGameOver() {
+            // Update player stats
+            if (playerProfile) {
+                playerProfile.totalGames++;
+                if (userWins > robotWins) {
+                    playerProfile.totalWins++;
+                } else {
+                    playerProfile.totalLosses++;
+                }
+                // Save updated stats to cookie
+                setCookie('rpsProfile', playerProfile, 999);
+                updateProfileDisplay();
+            }
+
             document.getElementById('gameArea').classList.add('hidden');
             document.getElementById('gameOverArea').classList.remove('hidden');
             
