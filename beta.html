@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rock Paper Scissors</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+    }
+
+    .game-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 90%;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+    }
+
+    h1 {
+      text-align: center;
+      color: #764ba2;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-setup {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+    }
+
+    .profile-setup h2 {
+      color: #764ba2;
+      margin-bottom: 20px;
+    }
+
+    .profile-setup input {
+      padding: 12px 20px;
+      font-size: 1.1em;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      margin: 10px 0;
+      width: 80%;
+    }
+
+    .profile-setup button {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .profile-setup button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .player-info {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+    }
+
+    .player-info h3 {
+      color: #764ba2;
+      margin-bottom: 5px;
+    }
+
+    #displayEmail {
+      font-size: 0.85em;
+      color: #555;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .stats div {
+      text-align: center;
+    }
+
+    .stats .stat-value {
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+    }
+
+    .score {
+      text-align: center;
+    }
+
+    .score h3 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+
+    .score-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .round-info {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      color: #666;
+    }
+
+    .choices {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      gap: 20px;
+    }
+
+    .choice-btn {
+      background: white;
+      border: 3px solid #667eea;
+      border-radius: 15px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .choice-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .choice-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .choice-icon {
+      font-size: 2.5em;
+    }
+
+    .choice-text {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .result {
+      text-align: center;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 15px;
+      font-size: 1.3em;
+      font-weight: bold;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .result.win {
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+      color: #0a5d3a;
+    }
+
+    .result.lose {
+      background: linear-gradient(135deg, #fccb90 0%, #ff6b6b 100%);
+      color: #8b0000;
+    }
+
+    .result.tie {
+      background: linear-gradient(135deg, #ffd89b 0%, #ffc107 100%);
+      color: #795548;
+    }
+
+    .continue-btn, .new-game-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 15px 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .continue-btn:hover, .new-game-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .game-over {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .game-over h2 {
+      color: #764ba2;
+      margin-bottom: 15px;
+      font-size: 2em;
+    }
+
+    .final-winner {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .reset-profile {
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .reset-profile:hover {
+      background: #ff5252;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>🎮 Rock Paper Scissors</h1>
+
+    <!-- Profile Setup -->
+    <div id="profileSetup" class="profile-setup">
+      <h2>Welcome! Create Your Profile</h2>
+      <p>Enter your name and email to save your game stats</p>
+      <input type="text" id="playerName" placeholder="Enter your name" />
+      <input type="email" id="playerEmail" placeholder="Enter your email" />
+      <br>
+      <button onclick="createProfile()">Start Playing</button>
+    </div>
+
+    <!-- Main Game Area -->
+    <div id="mainGame" class="hidden">
+      <div class="player-info">
+        <h3>👤 <span id="displayName"></span></h3>
+        <span id="displayEmail"></span>
+        <div class="stats">
+          <div>
+            <div>Total Games</div>
+            <div class="stat-value" id="totalGames">0</div>
+          </div>
+          <div>
+            <div>Total Wins</div>
+            <div class="stat-value" id="totalWins">0</div>
+          </div>
+          <div>
+            <div>Total Losses</div>
+            <div class="stat-value" id="totalLosses">0</div>
+          </div>
+          <div>
+            <div>Win Rate</div>
+            <div class="stat-value" id="winRate">0%</div>
+          </div>
+        </div>
+        <button class="reset-profile" onclick="logOut()">Log Out</button>
+      </div>
+
+      <!-- Game UI omitted for brevity -->
+      <!-- You can paste the rest of your game logic UI/buttons here -->
+
+    </div>
+  </div>
+
+  <script>
+    // --- Cookie helpers ---
+    function setCookie(name, value, years) {
+      const date = new Date();
+      date.setTime(date.getTime() + (years * 365 * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + JSON.stringify(value) + ";" + expires + ";path=/";
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+          return JSON.parse(c.substring(nameEQ.length, c.length));
+        }
+      }
+      return null;
+    }
+
+    function deleteCookie(name) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    // --- Profile Setup ---
+    let playerProfile = null;
+
+    window.onload = function () {
+      playerProfile = getCookie('rpsProfile');
+      if (playerProfile) {
+        document.getElementById('profileSetup').classList.add('hidden');
+        document.getElementById('mainGame').classList.remove('hidden');
+        updateProfileDisplay();
+      }
+    };
+
+    function createProfile() {
+      const name = document.getElementById('playerName').value.trim();
+      const email = document.getElementById('playerEmail').value.trim();
+
+      if (!name || !email) {
+        alert("Please enter both your name and email.");
+        return;
+      }
+
+      playerProfile = {
+        name,
+        email,
+        totalGames: 0,
+        totalWins: 0,
+        totalLosses: 0,
+      };
+
+      setCookie('rpsProfile', playerProfile, 999);
+
+      document.getElementById('profileSetup').classList.add('hidden');
+      document.getElementById('mainGame').classList.remove('hidden');
+      updateProfileDisplay();
+    }
+
+    function updateProfileDisplay() {
+      if (!playerProfile) return;
+      document.getElementById('displayName').textContent = playerProfile.name;
+      document.getElementById('displayEmail').textContent = playerProfile.email;
+      document.getElementById('totalGames').textContent = playerProfile.totalGames;
+      document.getElementById('totalWins').textContent = playerProfile.totalWins;
+      document.getElementById('totalLosses').textContent = playerProfile.totalLosses;
+      const rate = playerProfile.totalGames > 0 ? Math.round((playerProfile.totalWins / playerProfile.totalGames) * 100) : 0;
+      document.getElementById('winRate').textContent = rate + '%';
+    }
+
+    function logOut() {
+      if (confirm("Log out and clear profile?")) {
+        deleteCookie('rpsProfile');
+        playerProfile = null;
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
