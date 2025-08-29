@@ -471,7 +471,7 @@
         }
 
         function logOut() {
-            if (confirm('Are you sure you want to log out?')) {
+            if (confirm('Warning: Once You Log Out, You Can't get back in.')) {
                 deleteCookie('rpsProfile');
                 playerProfile = null;
                 location.reload();
@@ -530,7 +530,7 @@
             resultArea.classList.remove('hidden');
 
             // Check if game should end
-            const shouldEndGame = currentRound >= 5 && !isTie && userWins !== robotWins;
+            const shouldEndGame = currentRound >= 10 && !isTie && userWins !== robotWins;
             
             // Show continue button or game over
             if (!shouldEndGame) {
