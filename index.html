@@ -320,6 +320,10 @@
                         <div class="stat-value" id="totalWins">0</div>
                     </div>
                     <div>
+                        <div>Total Losses</div>
+                        <div class="stat-value" id="totalLosses">0</div>
+                    </div>
+                    <div>
                         <div>Win Rate</div>
                         <div class="stat-value" id="winRate">0%</div>
                     </div>
@@ -458,6 +462,7 @@
             document.getElementById('displayName').textContent = playerProfile.name;
             document.getElementById('totalGames').textContent = playerProfile.totalGames;
             document.getElementById('totalWins').textContent = playerProfile.totalWins;
+            document.getElementById('totalLosses').textContent = playerProfile.totalLosses;
             
             const winRate = playerProfile.totalGames > 0 
                 ? Math.round((playerProfile.totalWins / playerProfile.totalGames) * 100) 
