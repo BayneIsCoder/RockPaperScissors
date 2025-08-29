@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+
+        .score {
+            text-align: center;
+        }
+
+        .score h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .round-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            gap: 20px;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .choice-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            background: #e0e0e0;
+            border-color: #999;
+        }
+        
+        .choice-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .choice-icon {
+            font-size: 2.5em;
+        }
+
+        .choice-text {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .result {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .result.win {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #0a5d3a;
+        }
+
+        .result.lose {
+            background: linear-gradient(135deg, #fccb90 0%, #ff6b6b 100%);
+            color: #8b0000;
+        }
+
+        .result.tie {
+            background: linear-gradient(135deg, #ffd89b 0%, #ffc107 100%);
+            color: #795548;
+        }
+
+        .continue-btn, .new-game-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .continue-btn:hover, .new-game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .game-over h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .final-winner {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .choosing {
+            animation: shake 0.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Rock Paper Scissors</h1>
+        
+        <div class="score-board">
+            <div class="score">
+                <h3>👤 You</h3>
+                <div class="score-value" id="userScore">0</div>
+            </div>
+            <div class="score">
+                <h3>🤖 Robot</h3>
+                <div class="score-value" id="robotScore">0</div>
+            </div>
+        </div>
+
+        <div class="round-info">
+            Round <span id="currentRound">1</span> of 5
+        </div>
+
+        <div id="gameArea">
+            <div class="choices" id="choicesArea">
+                <button class="choice-btn" onclick="playGame(1)">
+                    <div class="choice-icon">🪨</div>
+                    <div class="choice-text">Rock</div>
+                </button>
+                <button class="choice-btn" onclick="playGame(2)">
+                    <div class="choice-icon">📄</div>
+                    <div class="choice-text">Paper</div>
+                </button>
+                <button class="choice-btn" onclick="playGame(3)">
+                    <div class="choice-icon">✂️</div>
+                    <div class="choice-text">Scissors</div>
+                </button>
+            </div>
+
+            <div class="result hidden" id="resultArea"></div>
+            
+            <button class="continue-btn hidden" id="continueBtn" onclick="nextRound()">
+                Continue to Next Round
+            </button>
+        </div>
+
+        <div class="game-over hidden" id="gameOverArea">
+            <h2>🏆 Game Over!</h2>
+            <div class="final-winner" id="finalWinner"></div>
+            <div style="margin-top: 20px;">
+                <strong>Final Score:</strong><br>
+                You: <span id="finalUserScore">0</span> | Robot: <span id="finalRobotScore">0</span>
+            </div>
+            <button class="new-game-btn" onclick="newGame()">
+                🎮 New Game
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let userWins = 0;
+        let robotWins = 0;
+        let currentRound = 1;
+        let robotChoice = 0;
+
+        const choices = {
+            1: { name: 'Rock', emoji: '🪨' },
+            2: { name: 'Paper', emoji: '📄' },
+            3: { name: 'Scissors', emoji: '✂️' }
+        };
+
+        function playGame(userChoice) {
+            // Robot makes random choice
+            robotChoice = Math.floor(Math.random() * 3) + 1;
+            
+            // Disable choice buttons
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            });
+
+            // Determine winner
+            let result = '';
+            let resultClass = '';
+            let isTie = false;
+            
+            if (userChoice === robotChoice) {
+                result = `It's a tie! Both chose ${choices[userChoice].emoji} ${choices[userChoice].name}`;
+                resultClass = 'tie';
+                isTie = true;
+            } else if (
+                (userChoice === 1 && robotChoice === 3) ||
+                (userChoice === 2 && robotChoice === 1) ||
+                (userChoice === 3 && robotChoice === 2)
+            ) {
+                result = `You win! ${choices[userChoice].emoji} ${choices[userChoice].name} beats ${choices[robotChoice].emoji} ${choices[robotChoice].name}`;
+                resultClass = 'win';
+                userWins++;
+            } else {
+                result = `Robot wins! ${choices[robotChoice].emoji} ${choices[robotChoice].name} beats ${choices[userChoice].emoji} ${choices[userChoice].name}`;
+                resultClass = 'lose';
+                robotWins++;
+            }
+
+            // Update scores
+            document.getElementById('userScore').textContent = userWins;
+            document.getElementById('robotScore').textContent = robotWins;
+
+            // Show result
+            const resultArea = document.getElementById('resultArea');
+            resultArea.textContent = result;
+            resultArea.className = `result ${resultClass}`;
+            resultArea.classList.remove('hidden');
+
+            // Check if game should end
+            const shouldEndGame = currentRound >= 5 && !isTie && userWins !== robotWins;
+            
+            // Show continue button or game over
+            if (!shouldEndGame) {
+                document.getElementById('continueBtn').classList.remove('hidden');
+                // Update button text if it's a tie
+                if (isTie) {
+                    document.getElementById('continueBtn').textContent = 'Try Again';
+                } else {
+                    document.getElementById('continueBtn').textContent = 'Continue to Next Round';
+                }
+            } else {
+                setTimeout(showGameOver, 1500);
+            }
+        }
+
+        function nextRound() {
+            // Only increment round if the last result wasn't a tie
+            const resultArea = document.getElementById('resultArea');
+            const wasTie = resultArea.classList.contains('tie');
+            
+            if (!wasTie) {
+                currentRound++;
+                document.getElementById('currentRound').textContent = currentRound;
+            }
+            
+            // Update round display if we're in overtime
+            if (currentRound > 5) {
+                document.querySelector('.round-info').innerHTML = `Round ${currentRound} <span style="color: #ff6b6b;">(Overtime!)</span>`;
+            }
+            
+            // Reset for next round
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
+            
+            // Re-enable choice buttons
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+        }
+
+        function showGameOver() {
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('gameOverArea').classList.remove('hidden');
+            
+            const finalWinner = document.getElementById('finalWinner');
+            if (userWins > robotWins) {
+                finalWinner.textContent = '🎉 You are the champion! 🎉';
+                finalWinner.style.color = '#0a5d3a';
+            } else if (robotWins > userWins) {
+                finalWinner.textContent = '🤖 Robot wins the match! 🤖';
+                finalWinner.style.color = '#8b0000';
+            } else {
+                finalWinner.textContent = '🤝 It\'s a draw! 🤝';
+                finalWinner.style.color = '#795548';
+            }
+            
+            document.getElementById('finalUserScore').textContent = userWins;
+            document.getElementById('finalRobotScore').textContent = robotWins;
+        }
+
+        function newGame() {
+            // Reset everything
+            userWins = 0;
+            robotWins = 0;
+            currentRound = 1;
+            
+            // Update display
+            document.getElementById('userScore').textContent = '0';
+            document.getElementById('robotScore').textContent = '0';
+            document.getElementById('currentRound').textContent = '1';
+            document.querySelector('.round-info').innerHTML = 'Round <span id="currentRound">1</span> of 5';
+            
+            // Show game area, hide game over
+            document.getElementById('gameArea').classList.remove('hidden');
+            document.getElementById('gameOverArea').classList.add('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('continueBtn').classList.add('hidden');
+            
+            // Re-enable choice buttons
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            });
+        }
+    </script>
+</body>
+</html>
