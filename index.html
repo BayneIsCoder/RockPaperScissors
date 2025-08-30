@@ -299,8 +299,10 @@
         <!-- Profile Setup Screen -->
         <div id="profileSetup" class="profile-setup">
             <h2>Welcome! Create Your Profile</h2>
-            <p style="margin-bottom: 20px;">Enter your name to save your game stats</p>
+            <p style="margin-bottom: 20px;">Enter your details to save your game stats</p>
             <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+            <br>
+            <input type="email" id="playerEmail" placeholder="Enter your email" maxlength="50">
             <br>
             <button onclick="createProfile()">Start Playing</button>
         </div>
@@ -310,6 +312,7 @@
             <!-- Player Info -->
             <div class="player-info">
                 <h3>👤 <span id="displayName"></span></h3>
+                <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;" id="displayEmail"></div>
                 <div class="stats">
                     <div>
                         <div>Total Games</div>
@@ -434,13 +437,28 @@
 
         function createProfile() {
             const playerName = document.getElementById('playerName').value.trim();
+            const playerEmail = document.getElementById('playerEmail').value.trim();
+            
             if (!playerName) {
                 alert('Please enter your name!');
+                return;
+            }
+            
+            if (!playerEmail) {
+                alert('Please enter your email!');
+                return;
+            }
+            
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(playerEmail)) {
+                alert('Please enter a valid email address!');
                 return;
             }
 
             playerProfile = {
                 name: playerName,
+                email: playerEmail,
                 totalGames: 0,
                 totalWins: 0,
                 totalLosses: 0,
@@ -460,6 +478,7 @@
             if (!playerProfile) return;
 
             document.getElementById('displayName').textContent = playerProfile.name;
+            document.getElementById('displayEmail').textContent = playerProfile.email || '';
             document.getElementById('totalGames').textContent = playerProfile.totalGames;
             document.getElementById('totalWins').textContent = playerProfile.totalWins;
             document.getElementById('totalLosses').textContent = playerProfile.totalLosses;
@@ -471,7 +490,7 @@
         }
 
         function logOut() {
-            if (confirm('Warning: Once You Log Out, You Can't get back in.')) {
+            if (confirm('Are you sure you want to log out?')) {
                 deleteCookie('rpsProfile');
                 playerProfile = null;
                 location.reload();
@@ -530,7 +549,7 @@
             resultArea.classList.remove('hidden');
 
             // Check if game should end
-            const shouldEndGame = currentRound >= 10 && !isTie && userWins !== robotWins;
+            const shouldEndGame = currentRound >= 5 && !isTie && userWins !== robotWins;
             
             // Show continue button or game over
             if (!shouldEndGame) {
